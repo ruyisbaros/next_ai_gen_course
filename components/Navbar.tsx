@@ -3,6 +3,7 @@ import React from "react";
 import LoginBtn from "@/components/LoginBtn";
 import { getAuthSession } from "@/lib/auth";
 import UserAccountNav from "./UserAccountNav";
+import { ThemeToggle } from "./ThemeToggle";
 type Props = {};
 
 const Navbar = async (props: Props) => {
@@ -36,6 +37,7 @@ const Navbar = async (props: Props) => {
               </Link>
             </>
           )}
+          <ThemeToggle className="mr-4" />
           <div className="flex items-center">
             {session?.user ? (
               <UserAccountNav user={session?.user} />
