@@ -9,6 +9,7 @@ import { Input } from "./ui/input";
 import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
 import { Plus, Trash } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 type Props = {};
 
 type Input = z.infer<typeof createChapterSchema>;
@@ -26,6 +27,7 @@ const CreateCourseForm = (props: Props) => {
     console.log(data);
   };
   form.watch();
+  console.log(form.watch());
   return (
     <div className="w-full ">
       <Form {...form}>
@@ -36,7 +38,9 @@ const CreateCourseForm = (props: Props) => {
             render={({ field }) => {
               return (
                 <FormItem className="w-full flex flex-col items-start sm:items-center sm:flex-row">
-                  <FormLabel className="flex-[1] text-xl">Title</FormLabel>
+                  <FormLabel className="flex-[1] text-xl text-red-500">
+                    Title
+                  </FormLabel>
                   <FormControl className="flex-[6]">
                     <Input
                       placeholder="Enter the main topic of the course..."
@@ -47,42 +51,72 @@ const CreateCourseForm = (props: Props) => {
               );
             }}
           />
-          {form.watch("units").map((_, index) => (
-            <FormField
-              key={index}
-              control={form.control}
-              name={`units.${index}`}
-              render={({ field }) => {
-                return (
-                  <FormItem className="w-full flex flex-col items-start sm:items-center sm:flex-row">
-                    <FormLabel className="flex-[1] text-xl">{`Unit ${
-                      index + 1
-                    }`}</FormLabel>
-                    <FormControl className="flex-[6]">
-                      <Input
-                        placeholder="Enter the subtopic of the course..."
-                        {...field}
-                      />
-                    </FormControl>
-                  </FormItem>
-                );
-              }}
-            />
-          ))}
-          <div className="flex items-center justify-center mt-4">
+          <AnimatePresence>
+            {form.watch("units").map((_, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{
+                  opacity: { duration: 0.2 },
+                  height: { duration: 0.2 },
+                }}
+              >
+                <FormField
+                  control={form.control}
+                  name={`units.${index}`}
+                  render={({ field }) => {
+                    return (
+                      <FormItem className="w-full flex flex-col items-start sm:items-center sm:flex-row">
+                        <FormLabel className="flex-[1] text-xl">{`Unit ${
+                          index + 1
+                        }`}</FormLabel>
+                        <FormControl className="flex-[6]">
+                          <Input
+                            placeholder="Enter the subtopic of the course..."
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    );
+                  }}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+          <div className="flex items-center justify-center mt-6">
             <Separator className="flex-[1]" />
             <div className="mx-4 ">
-              <Button variant="secondary" className="font-semibold">
+              <Button
+                type="button"
+                variant="secondary"
+                className="font-semibold"
+                onClick={() => {
+                  form.setValue("units", [...form.watch("units"), ""]);
+                }}
+              >
                 Add Unit
                 <Plus className="w-4 h-4 ml-2 text-green-500" />
               </Button>
-              <Button variant="secondary" className="font-semibold ml-2">
+              <Button
+                type="button"
+                variant="secondary"
+                className="font-semibold ml-4"
+                onClick={() => {
+                  form.setValue("units", [...form.watch("units").slice(0, -1)]);
+                }}
+              >
                 Remove Unit
                 <Trash className="w-4 h-4 ml-2 text-red-500 font-bold" />
               </Button>
             </div>
+            <Separator className="flex-[1]" />
           </div>
         </form>
+        <Button type="submit" className="w-full mt-6" size="lg">
+          Create Course
+        </Button>
       </Form>
     </div>
   );
