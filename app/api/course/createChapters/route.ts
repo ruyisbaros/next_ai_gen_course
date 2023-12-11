@@ -1,3 +1,4 @@
+// /api/course/createChapters
 import { NextResponse } from "next/server";
 import { createChapterSchema } from "@/validator/course";
 import { ZodError } from "zod";
@@ -69,7 +70,7 @@ export async function POST(req: Request, res: Response) {
       );
     }
 
-    return NextResponse.json({ course_id: course.id });
+    return NextResponse.json({ course_id: course.id, course, output_units });
   } catch (error) {
     if (error instanceof ZodError) {
       return new NextResponse("Invalid credentials", { status: 400 });

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "./ui/form";
 import { z } from "zod";
 import { createChapterSchema } from "@/validator/course";
@@ -10,11 +10,29 @@ import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
 import { Plus, Trash } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+
 type Props = {};
 
 type Input = z.infer<typeof createChapterSchema>;
 
 const CreateCourseForm = (props: Props) => {
+  const router = useRouter();
+  //const [pending, setPending] = useState<boolean | null>(null);
+  const { mutate: createChapters, isPending } = useMutation({
+    mutationFn: async ({ title, units }: Input) => {
+      const { data } = await axios.post("/api/course/createChapters", {
+        title,
+        units,
+      });
+      console.log(data);
+      //setPending(isPending);
+      return data;
+    },
+  });
+  //console.log(pending);
   const form = useForm<Input>({
     resolver: zodResolver(createChapterSchema),
     defaultValues: {
@@ -24,12 +42,21 @@ const CreateCourseForm = (props: Props) => {
   });
 
   const onSubmit = (data: Input) => {
-    console.log(data);
+    console.log("clicked");
+
+    createChapters(data, {
+      onSuccess: ({ course_id }) => {
+        router.push(`/create/${course_id}`);
+      },
+      onError: (error) => {
+        console.error(error);
+      },
+    });
   };
   form.watch();
   console.log(form.watch());
   return (
-    <div className="w-full ">
+    <div className="w-full relative">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-full mt-4">
           <FormField
@@ -43,7 +70,8 @@ const CreateCourseForm = (props: Props) => {
                   </FormLabel>
                   <FormControl className="flex-[6]">
                     <Input
-                      placeholder="Enter the main topic of the course..."
+                      placeholder="Enter the main topic of path..."
+                      required
                       {...field}
                     />
                   </FormControl>
@@ -74,7 +102,8 @@ const CreateCourseForm = (props: Props) => {
                         }`}</FormLabel>
                         <FormControl className="flex-[6]">
                           <Input
-                            placeholder="Enter the subtopic of the course..."
+                            placeholder="Enter the subtopic of the path..."
+                            required
                             {...field}
                           />
                         </FormControl>
@@ -113,10 +142,10 @@ const CreateCourseForm = (props: Props) => {
             </div>
             <Separator className="flex-[1]" />
           </div>
+          <Button type="submit" className="w-full mt-6" size="lg">
+            Create Course
+          </Button>
         </form>
-        <Button type="submit" className="w-full mt-6" size="lg">
-          Create Course
-        </Button>
       </Form>
     </div>
   );
