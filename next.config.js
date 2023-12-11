@@ -13,3 +13,15 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
+
+/* 
+images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '**',
+      },
+    ],
+  },
+*/
