@@ -60,16 +60,6 @@ CREATE TABLE "Chapter" (
     CONSTRAINT "Chapter_unitId_fkey" FOREIGN KEY ("unitId") REFERENCES "Unit" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
--- CreateTable
-CREATE TABLE "Question" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "chapterId" TEXT NOT NULL,
-    "question" TEXT NOT NULL,
-    "answer" TEXT NOT NULL,
-    "options" TEXT NOT NULL,
-    CONSTRAINT "Question_chapterId_fkey" FOREIGN KEY ("chapterId") REFERENCES "Chapter" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-);
-
 -- CreateIndex
 CREATE UNIQUE INDEX "Account_userId_key" ON "Account"("userId");
 
@@ -90,6 +80,3 @@ CREATE INDEX "courseId" ON "Unit"("courseId");
 
 -- CreateIndex
 CREATE INDEX "unitId" ON "Chapter"("unitId");
-
--- CreateIndex
-CREATE INDEX "chapterId" ON "Question"("chapterId");

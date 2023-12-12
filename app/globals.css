@@ -74,7 +74,9 @@
     @apply bg-background text-foreground;
   }
 }
-
+button:disabled {
+  cursor: not-allowed;
+}
 .animT {
   animation: toast 2s ease-in;
 }
@@ -87,5 +89,18 @@
   }
   100% {
     display: none;
+  }
+}
+.cover-create {
+  border-radius: 4px 0 0 4px;
+  animation: grosser 40s ease-in;
+}
+
+@keyframes grosser {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
   }
 }

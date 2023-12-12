@@ -20,7 +20,9 @@ type Input = z.infer<typeof createChapterSchema>;
 
 const CreateCourseForm = (props: Props) => {
   const router = useRouter();
-  //const [pending, setPending] = useState<boolean | null>(null);
+  const [pending, setPending] = useState<boolean | null>(null);
+  const [clicked, setClicked] = useState<boolean | null>(null);
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const { mutate: createChapters, isPending } = useMutation({
     mutationFn: async ({ title, units }: Input) => {
       const { data } = await axios.post("/api/course/createChapters", {
@@ -43,9 +45,12 @@ const CreateCourseForm = (props: Props) => {
 
   const onSubmit = (data: Input) => {
     console.log("clicked");
-
+    if (data.title !== "" && data.units.some((ut) => ut === "")) {
+      return;
+    }
     createChapters(data, {
       onSuccess: ({ course_id }) => {
+        setPending(false);
         router.push(`/create/${course_id}`);
       },
       onError: (error) => {
@@ -53,6 +58,7 @@ const CreateCourseForm = (props: Props) => {
       },
     });
   };
+  //console.log(Math.floor((1702390088545-1702390054217)/1000));
   form.watch();
   console.log(form.watch());
   return (
@@ -142,9 +148,36 @@ const CreateCourseForm = (props: Props) => {
             </div>
             <Separator className="flex-[1]" />
           </div>
-          <Button type="submit" className="w-full mt-6" size="lg">
-            Create Course
-          </Button>
+          <div className="w-full mt-6 relative">
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="w-full relative"
+              size="lg"
+              onClick={() => {
+                setPending(true);
+                setClicked(true);
+              }}
+            >
+              <span className="absolute z-[10]">
+                {clicked ? "Path is Being Created..." : "Let's Go!"}
+              </span>
+            </Button>
+            {clicked && (
+              <div className="absolute z-[8] h-[44px] top-0 left-0 bg-green-300 cover-create"></div>
+            )}
+            {pending === false && (
+              <motion.div
+                className="absolute z-[8] h-[44px] top-0 left-0 bg-green-300 rounded"
+                initial={{ width: 0 }}
+                animate={{ width: 576 }}
+                exit={{ width: 0 }}
+                transition={{
+                  duration: 2,
+                }}
+              ></motion.div>
+            )}
+          </div>
         </form>
       </Form>
     </div>
@@ -152,3 +185,14 @@ const CreateCourseForm = (props: Props) => {
 };
 
 export default CreateCourseForm;
+
+/* 
+<motion.div
+                className="absolute h-[88%] top-[1px] left-0 bg-green-300 cover-create"
+                initial={{ width: "60%" }}
+                animate={{ width: "100%" }}
+                transition={{
+                  width: { duration: 0.5 },
+                }}
+              ></motion.div>
+*/

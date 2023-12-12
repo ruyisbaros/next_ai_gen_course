@@ -1,6 +1,6 @@
 "use client";
 import { Chapter, Course, Unit } from "@prisma/client";
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import ChapterCard, { ChapterCardHandler } from "./ChapterCard";
 import { Separator } from "./ui/separator";
 import Link from "next/link";
@@ -16,7 +16,6 @@ type Props = {
 };
 
 const ConfirmChapters = ({ course }: Props) => {
-  const [clicked, setClicked] = useState(false);
   const chapterRefs: Record<string, React.RefObject<ChapterCardHandler>> = {};
   course.units.forEach((unit) => {
     unit.chapters.forEach((chapter) => {
@@ -24,7 +23,16 @@ const ConfirmChapters = ({ course }: Props) => {
       chapterRefs[chapter.id] = React.useRef(null);
     });
   });
+  const [completedChapters, setCompletedChapters] = useState<Set<String>>(
+    new Set()
+  );
+  const [loading, setLoading] = useState(false);
   // console.log(chapterRefs);
+  const totalChaptersCount = useMemo(() => {
+    return course.units.reduce((ac, val) => {
+      return ac + val.chapters.length;
+    }, 0);
+  }, [course.units]);
   return (
     <div className="w-full mt-4 ">
       {course.units.map((unit, unitIndex) => (
@@ -40,8 +48,8 @@ const ConfirmChapters = ({ course }: Props) => {
                 key={chapter.id}
                 chapter={chapter}
                 chapterIndex={chapterIndex}
-                clicked={clicked}
-                setClicked={setClicked}
+                setCompletedChapters={setCompletedChapters}
+                completedChapters={completedChapters}
               />
             ))}
           </div>
@@ -59,13 +67,13 @@ const ConfirmChapters = ({ course }: Props) => {
           </Link>
           <Button
             type="button"
+            disabled={loading}
             className="font-semibold"
             onClick={() => {
               Object.values(chapterRefs).forEach((val) => {
                 val.current?.triggerLoad();
               });
-
-              setClicked(true);
+              setLoading(true);
             }}
           >
             Generate

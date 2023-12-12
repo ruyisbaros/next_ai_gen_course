@@ -79,19 +79,9 @@ model Chapter {
   videoId String?
   summary String? 
 
-  questions Question[]
+  
   unit Unit @relation(fields: [unitId],references: [id])
 
   @@index([unitId],name:"unitId")
 }
 
-model Question {
-  id String @id @default(cuid())
-  chapterId String
-  question String
-  answer String
-  options String
-  chapter Chapter @relation(fields: [chapterId],references: [id])
-
-   @@index([chapterId],name:"chapterId")
-}
