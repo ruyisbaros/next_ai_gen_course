@@ -93,7 +93,7 @@ button:disabled {
 }
 .cover-create {
   border-radius: 4px 0 0 4px;
-  animation: grosser 40s ease-in;
+  animation: grosser 60s ease-in;
 }
 
 @keyframes grosser {

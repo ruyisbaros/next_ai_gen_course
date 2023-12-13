@@ -43,7 +43,7 @@ export async function POST(req: Request, res: Response) {
         transcript,
       { summary: "summary of the transcript" }
     );
-    /* const questions = await getQuestionsFromTranscript(
+    const questions = await getQuestionsFromTranscript(
       transcript,
       chapter.name
     );
@@ -63,7 +63,7 @@ export async function POST(req: Request, res: Response) {
         });
       })
     );
- */
+
     await prisma.chapter.update({
       where: { id: chapterId },
       data: {

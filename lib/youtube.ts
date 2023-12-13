@@ -5,7 +5,7 @@ import { strict_output } from "@/lib/gbt";
 export async function searchYoutube(searchQuery: string) {
   searchQuery = encodeURIComponent(searchQuery);
   const { data } = await axios.get(
-    `https://www.googleapis.com/youtube/v3/search?key=${process.env.YOUTUBE_API_KEY}&q=${searchQuery}&videoDuration=medium&videoEmbeddable=true&type=video&maxResults=5`
+    `https://youtube.googleapis.com/youtube/v3/search?key=${process.env.YOUTUBE_API_KEY}&q=${searchQuery}&videoDuration=medium&videoEmbeddable=true&type=video&maxResults=5`
   );
 
   if (!data) {
@@ -39,7 +39,7 @@ export async function getTranscript(videoId: string) {
 }
 
 export async function getQuestionsFromTranscript(
-  transcript: string,
+  summary: string,
   course_title: string
 ) {
   type question = {
@@ -53,7 +53,7 @@ export async function getQuestionsFromTranscript(
   const questions: question = await strict_output(
     "You are a helpful AI that is able to generate mcq questions and answers, the length of each answer should not be more than 15 words",
     new Array(5).fill(
-      `You are to generate a random hard mcq question in valid JSON array of objects format about ${course_title} with context of the following transcript: ${transcript}`
+      `You are to generate a random hard mcq question in valid JSON array of objects format about ${course_title} with context of the following summary: ${summary}`
     ),
     {
       question: "question",

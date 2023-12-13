@@ -159,13 +159,15 @@ const CreateCourseForm = (props: Props) => {
                 setClicked(true);
               }}
             >
-              <span className="absolute z-[10]">
+              <span className="absolute z-[20] bg-transparent font-bold">
                 {clicked ? "Path is Being Created..." : "Let's Go!"}
               </span>
             </Button>
+            {/* clicked */}
             {clicked && (
               <div className="absolute z-[8] h-[44px] top-0 left-0 bg-green-300 cover-create"></div>
             )}
+            {/* pending false */}
             {pending === false && (
               <motion.div
                 className="absolute z-[8] h-[44px] top-0 left-0 bg-green-300 rounded"
